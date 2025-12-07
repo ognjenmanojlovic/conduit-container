@@ -1,0 +1,16 @@
+# Environment file
+.env
+
+# Logs
+*.log
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# Temporary and build artifacts
+__pycache__/
+*.pyc
+
+# Docker garbage
+*.pid
