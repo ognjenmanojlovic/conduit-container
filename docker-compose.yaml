@@ -32,10 +32,11 @@ services:
       - conduit-network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/ || exit 1"]
+      test: ["CMD-SHELL", "nc -z localhost 8000 || exit 1"]
       interval: 10s
       timeout: 5s
-      retries: 3
+      retries: 5
+      start_period: 10s
 
   frontend:
     build:
