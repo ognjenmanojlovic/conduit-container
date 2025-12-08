@@ -125,7 +125,7 @@ docker compose version
 ### 3. Clone the repository
 
 ```bash
-git clone --recursive https://github.com/<your-username>/conduit-container.git
+git clone --recursive https://github.com/ognjenmanojlovic/conduit-container.git
 ```
 
 ```bash
