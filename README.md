@@ -6,7 +6,7 @@ A fully containerized deployment of the **Conduit RealWorld App**, consisting of
 - **Django REST API Backend**
 - **SQLite Database with Persistent Docker Volume**
 
-![Conduit Homepage Screenshot](/conduit-container/docs/images/homepage.png)
+![Conduit Homepage Screenshot](docs/images/homepage.png)
 
 This project demonstrates how to containerize a full‑stack application, configure services using environment variables, orchestrate multiple containers with Docker Compose, and deploy the entire stack to a remote server as part of the DevSecOps course.
 
