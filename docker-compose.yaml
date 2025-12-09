@@ -12,12 +12,6 @@ services:
     restart: unless-stopped
     volumes:
       - db-data:/data
-    healthcheck:
-      test: ["CMD-SHELL", "nc -z localhost 8000 || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 5
-      start_period: 10s
 
   frontend:
     build:
@@ -26,18 +20,12 @@ services:
     env_file:
       - ./.env
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     ports:
       - "${FRONTEND_PORT:-8282}:80"
     networks:
       - conduit-network
     restart: unless-stopped
-    healthcheck:
-      test: ["CMD-SHELL", "wget -qO- http://localhost/ || exit 1"]
-      interval: 10s
-      timeout: 5s
-      retries: 3
 
 networks:
   conduit-network:
