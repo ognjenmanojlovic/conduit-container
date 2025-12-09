@@ -1,37 +1,6 @@
 # Conduit Container
 
-A fully containerized deployment of the **Conduit RealWorld App**, consisting of:
-
-- **Angular Frontend**
-- **Django REST API Backend**
-- **SQLite Database with Persistent Docker Volume**
-
-![Conduit Homepage Screenshot](docs/images/homepage.png)
-
-This project demonstrates how to containerize a full‑stack application, configure services using environment variables, orchestrate multiple containers with Docker Compose, and deploy the entire stack to a remote server as part of the DevSecOps course.
-
----
-
-## Table of Contents
-
-- [Description](#description)
-- [Tech Stack](#tech-stack)
-- [Project Structure](#project-structure)
-- [Quickstart](#quickstart)
-  - [Prerequisites](#prerequisites)
-- [Deployment (Server)](#deployment-server)
-- [Configuration](#configuration)
-  - [Environment Variables](#environment-variables)
-- [Usage](#usage)
-- [Testing Checklist](#testing-checklist)
-- [Security Notes](#security-notes)
-- [Author](#author)
-
----
-
-## Description
-
-The **Conduit Container Project** showcases how to containerize a full‑stack application using Docker and Docker Compose.
+The **Conduit Container Project** showcases how to containerize a full‑stack application **Conduit RealWorld App** using Docker and Docker Compose.
 
 This setup includes:
 
@@ -48,6 +17,23 @@ This project demonstrates:
 - Automated backend startup via `entrypoint.sh`  
 - Persistent SQLite database volume (`db-data`)  
 - Deployment to a remote Linux server  
+
+---
+
+## Table of Contents
+
+- [Tech Stack](#tech-stack)
+- [Project Structure](#project-structure)
+- [Quickstart](#quickstart)
+  - [Prerequisites](#prerequisites)
+- [Deployment (Server)](#deployment-server)
+- [Configuration](#configuration)
+  - [Environment Variables](#environment-variables)
+- [Usage](#usage)
+- [Testing Checklist](#testing-checklist)
+- [Security Notes](#security-notes)
+- [Homepage Screenshot](#homepage-screenshot)
+- [Author](#author)
 
 ---
 
@@ -117,14 +103,23 @@ git --version
 ssh <username>@<server-ip>
 ```
 
-### 2. Clone the repository
+### 2. Clone and enter the repository
 
 ```bash
 git clone --recursive https://github.com/ognjenmanojlovic/conduit-container.git
+```
+
+```bash
 cd conduit-container
 ```
 
-### 3. Prepare environment variables
+### 3. Update all submodules
+
+```bash
+git submodule update --init --recursive
+```
+
+### 4. Prepare environment variables
 
 ```bash
 cp example.env .env
@@ -138,19 +133,19 @@ Edit `.env` and configure:
 - Django superuser values  
 - SQLite DB path (default: `/data/db.sqlite3`)  
 
-### 4. Build Docker images
+### 5. Build Docker images
 
 ```bash
 docker compose build
 ```
 
-### 5. Start the application
+### 6. Start the application
 
 ```bash
 docker compose up -d
 ```
 
-### 6. Access in browser
+### 7. Access in browser
 
 Frontend:
 
@@ -170,14 +165,17 @@ Django Admin:
 http://<server-ip>:8000/admin/
 ```
 
-### 7. Persistence Test
+### 8. Persistence Test
 
 ```bash
 docker compose down
+```
+
+```bash
 docker compose up -d
 ```
 
-Your created users, articles, and comments should still exist — because SQLite is stored in the persistent Docker volume `db-data`.
+Your created users, articles, and comments should still exist, because SQLite is stored in the persistent Docker volume `db-data`.
 
 ---
 
@@ -261,6 +259,14 @@ http://<server-ip>:8000/admin/
 - Do not expose unnecessary ports  
 - Keep dependencies updated  
 - Ensure allowed hosts are set correctly  
+
+---
+
+## Homepage Screenshot
+
+Below is a screenshot of the Conduit application's homepage as part of the deployment validation.
+
+![Conduit Homepage](docs/images/homepage.png)
 
 ---
 
