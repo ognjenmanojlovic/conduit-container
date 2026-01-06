@@ -1,8 +1,6 @@
 services:
   backend:
-    build:
-      context: ./backend
-      dockerfile: Dockerfile
+    image: ghcr.io/ognjenmanojlovic/conduit-container-backend:latest
     env_file:
       - ./.env
     ports:
@@ -14,9 +12,7 @@ services:
       - db-data:/data
 
   frontend:
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
+    image: ghcr.io/ognjenmanojlovic/conduit-container-frontend:latest
     env_file:
       - ./.env
     depends_on:
