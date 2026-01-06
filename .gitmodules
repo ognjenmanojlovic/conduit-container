@@ -1,0 +1,8 @@
+[submodule "backend"]
+	path = backend
+	url = git@github.com:ognjenmanojlovic/conduit-backend.git
+	branch = development
+[submodule "frontend"]
+	path = frontend
+	url = git@github.com:ognjenmanojlovic/conduit-frontend.git
+	branch = development
