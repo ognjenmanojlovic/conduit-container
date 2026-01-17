@@ -1,6 +1,6 @@
 services:
   backend:
-    image: ghcr.io/ognjenmanojlovic/conduit-container-backend:latest
+    image: ghcr.io/ognjenmanojlovic/conduit-backend:latest
     env_file:
       - ./.env
     ports:
@@ -12,7 +12,7 @@ services:
       - db-data:/data
 
   frontend:
-    image: ghcr.io/ognjenmanojlovic/conduit-container-frontend:latest
+    image: ghcr.io/ognjenmanojlovic/conduit-frontend:latest
     env_file:
       - ./.env
     depends_on:
