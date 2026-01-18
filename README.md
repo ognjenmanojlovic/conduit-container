@@ -73,7 +73,8 @@ conduit-container/
 ├─ docs/
 │  ├─ images/
 │  │  └─ homepage.png
-│  └─ Conduit_Container_Checkliste
+│  ├─ Conduit_Container_Checkliste
+│  └─ Conduit_Deployment_Checkliste
 ├─ docker-compose.yaml
 ├─ example.env
 ├─ .gitignore
