@@ -1,22 +1,27 @@
 # Conduit Container
 
-The **Conduit Container Project** showcases how to containerize a full‑stack application **Conduit RealWorld App** using Docker and Docker Compose.
+The **Conduit Container Project** showcases how to containerize and **automatically deploy** a full-stack application (**Conduit RealWorld App**) using Docker, Docker Compose, **GitHub Actions**, and **GitHub Container Registry (GHCR)**.
+
+This repository builds upon the existing Conduit Container setup and enhances it with a fully automated CI/CD pipeline for container image delivery and deployment.
 
 This setup includes:
 
 - A Django backend (REST API)
 - An Angular frontend served via Nginx
 - An SQLite database stored inside a persistent Docker volume
+- Automated image build & deployment via GitHub Actions
 
 All configuration values are stored in environment variables and can be easily adjusted before deployment.
 
 This project demonstrates:
 
 - Containerization of frontend + backend  
-- Multi‑stage Docker builds  
+- Multi-stage Docker builds  
 - Automated backend startup via `entrypoint.sh`  
 - Persistent SQLite database volume (`db-data`)  
 - Deployment to a remote Linux server  
+- **CI/CD pipeline with GitHub Actions**  
+- **Image distribution via GitHub Container Registry (GHCR)**
 
 ---
 
@@ -24,6 +29,7 @@ This project demonstrates:
 
 - [Tech Stack](#tech-stack)
 - [Project Structure](#project-structure)
+- [CI/CD Pipeline](#cicd-pipeline)
 - [Quickstart](#quickstart)
   - [Prerequisites](#prerequisites)
 - [Deployment (Server)](#deployment-server)
@@ -43,6 +49,8 @@ This project demonstrates:
 - **Backend:** Django REST Framework + Gunicorn  
 - **Database:** SQLite (persisted in `/data/db.sqlite3` inside Docker volume)  
 - **Containerization:** Docker + Docker Compose  
+- **CI/CD:** GitHub Actions  
+- **Container Registry:** GitHub Container Registry (GHCR)
 
 ---
 
@@ -59,15 +67,38 @@ conduit-container/
 │  ├─ Dockerfile
 │  ├─ .dockerignore
 │  └─ ...
+├─ .github/
+│  └─ workflows/
+│     └─ deployment.yaml       # GitHub Actions CI/CD pipeline
 ├─ docs/
 │  ├─ images/
 │  │  └─ homepage.png
-│  └─Conduit_Container_Checkliste
+│  └─ Conduit_Container_Checkliste
 ├─ docker-compose.yaml
 ├─ example.env
 ├─ .gitignore
 └─ README.md
 ```
+
+---
+
+## CI/CD Pipeline
+
+The CI/CD pipeline is implemented using **GitHub Actions** and extends the original container project with fully automated deployment.
+
+### Pipeline Workflow
+
+1. A GitHub Actions workflow is triggered on repository updates
+2. The repository and its submodules are checked out
+3. Backend and frontend Docker images are built
+4. Images are pushed to GitHub Container Registry (GHCR)
+5. The target server is accessed securely via SSH
+6. The latest container images are pulled on the server
+7. The application is deployed using Docker Compose
+
+Containers are only recreated if images or configuration have changed.
+
+No manual interaction with the server is required after the initial setup.
 
 ---
 
@@ -97,6 +128,8 @@ git --version
 
 ## Deployment (Server)
 
+> **Note:** Manual deployment steps are only required for the initial setup. All future deployments are handled automatically by GitHub Actions.
+
 ### 1. Connect to your server
 
 ```bash
@@ -113,13 +146,7 @@ git clone --recursive https://github.com/ognjenmanojlovic/conduit-container.git
 cd conduit-container
 ```
 
-### 3. Update all submodules
-
-```bash
-git submodule update --init --recursive
-```
-
-### 4. Prepare environment variables
+### 3. Prepare environment variables
 
 ```bash
 cp example.env .env
@@ -133,49 +160,14 @@ Edit `.env` and configure:
 - Django superuser values  
 - SQLite DB path (default: `/data/db.sqlite3`)  
 
-### 5. Build Docker images
+### 4. Initial startup
 
 ```bash
-docker compose build
-```
-
-### 6. Start the application
-
-```bash
+docker compose pull
 docker compose up -d
 ```
 
-### 7. Access in browser
-
-Frontend:
-
-```
-http://<server-ip>:8282
-```
-
-Backend API:
-
-```
-http://<server-ip>:8000/api/articles/
-```
-
-Django Admin:
-
-```
-http://<server-ip>:8000/admin/
-```
-
-### 8. Persistence Test
-
-```bash
-docker compose down
-```
-
-```bash
-docker compose up -d
-```
-
-Your created users, articles, and comments should still exist, because SQLite is stored in the persistent Docker volume `db-data`.
+After the initial setup, **all future deployments are performed automatically** via GitHub Actions.
 
 ---
 
@@ -249,16 +241,19 @@ http://<server-ip>:8000/admin/
 - [x] Environment variables loaded correctly  
 - [x] Application persists data across restarts  
 - [x] `.env` excluded from Git  
+- [x] GitHub Actions pipeline runs successfully  
+- [x] Images pushed to GHCR  
+- [x] Automated deployment via SSH works
 
 ---
 
 ## Security Notes
 
 - `.env` must **never** be committed  
-- Always use strong, unique passwords  
-- Do not expose unnecessary ports  
-- Keep dependencies updated  
-- Ensure allowed hosts are set correctly  
+- Secrets are managed via **GitHub Actions Secrets**  
+- SSH authentication uses key-based login only  
+- Docker images are pulled from a trusted registry (GHCR)  
+- No credentials are hardcoded in the repository
 
 ---
 
