@@ -27,14 +27,51 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: ghcr.io/ognjenmanojlovic/conduit-backend:latest
+          tags: |
+            ghcr.io/ognjenmanojlovic/conduit-backend:latest
+            ghcr.io/ognjenmanojlovic/conduit-backend:${{ github.sha }}
 
       - name: Build & push frontend image
         uses: docker/build-push-action@v5
         with:
           context: ./frontend
           push: true
-          tags: ghcr.io/ognjenmanojlovic/conduit-frontend:latest
+          tags: |
+            ghcr.io/ognjenmanojlovic/conduit-frontend:latest
+            ghcr.io/ognjenmanojlovic/conduit-frontend:${{ github.sha }}
+
+      - name: Generate .env file from GitHub Secrets
+        run: |
+          cat > .env << 'EOF'
+          FRONTEND_PORT=${{ secrets.ENV_FRONTEND_PORT }}
+          BACKEND_PORT=${{ secrets.ENV_BACKEND_PORT }}
+
+          DJANGO_DB_PATH=${{ secrets.ENV_DJANGO_DB_PATH }}
+
+          DJANGO_SUPERUSER_USERNAME=${{ secrets.ENV_DJANGO_SUPERUSER_USERNAME }}
+          DJANGO_SUPERUSER_EMAIL=${{ secrets.ENV_DJANGO_SUPERUSER_EMAIL }}
+          DJANGO_SUPERUSER_PASSWORD=${{ secrets.ENV_DJANGO_SUPERUSER_PASSWORD }}
+
+          DJANGO_ALLOWED_HOSTS=${{ secrets.ENV_DJANGO_ALLOWED_HOSTS }}
+          EOF
+          
+      - name: Prepare deployment directory on server
+        uses: appleboy/ssh-action@v1.0.3
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            mkdir -p ~/conduit-container
+          
+      - name: Copy docker-compose.yaml and .env to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "docker-compose.yaml,.env"
+          target: "~/conduit-container"
 
       - name: Deploy on server via SSH
         uses: appleboy/ssh-action@v1.0.3
@@ -46,3 +83,4 @@ jobs:
             cd ~/conduit-container
             docker compose pull
             docker compose up -d
+            docker image prune -f
